@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: mhrs_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: mhrs_db
+      MYSQL_USER: mhrs_user
+      MYSQL_PASSWORD: mhrs_pass
+      MYSQL_ROOT_PASSWORD: rootpass123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: mhrs_web
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      SECRET_KEY: django-insecure-oez+sv-ejper-r0x8%_&cs@q@3u52ygy629traa@^8!7pcsu0n
+      DEBUG: "True"
+      DB_NAME: mhrs_db
+      DB_USER: mhrs_user
+      DB_PASSWORD: mhrs_pass
+      DB_HOST: db
+      DB_PORT: 3306
+
+volumes:
+  mariadb_data:
