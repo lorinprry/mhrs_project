@@ -11,7 +11,7 @@ pipeline {
         stage('DEPLOY') {
             steps {
                 withCredentials([sshUserPrivateKey(
-                    credentialsId: '93e7edb9-93ce-4170-9635-c56203897862',
+                    credentialsId: 'jenkins-ubuntu-pem',
                     keyFileVariable: 'SSH_KEY',
                     usernameVariable: 'SSH_USER'
                 )]) {
