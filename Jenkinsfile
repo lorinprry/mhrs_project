@@ -18,7 +18,7 @@ pipeline {
                     sh '''
                     chmod 600 "$SSH_KEY"
 
-                    ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no -p 2222 "$SSH_USER"@172.17.0.1 "
+                    ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no -p 2222 "$SSH_USER"@192.168.25.250 "
                         mkdir -p ~/mhrs_project &&
                         if [ ! -d ~/mhrs_project/.git ]; then
                             git clone https://github.com/lorinprry/mhrs_project.git ~/mhrs_project
