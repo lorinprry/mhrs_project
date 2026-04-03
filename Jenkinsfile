@@ -10,13 +10,21 @@ pipeline {
 
         stage('Deploy to Ubuntu') {
             steps {
-                sshagent(credentials: ['93e7edb9-93ce-4170-9635-c56203897862']) {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: '93e7edb9-93ce-4170-9635-c56203897862',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no -p 2222 lorin@127.0.0.1 "
-                        cd ~/mhrs_project || git clone https://github.com/lorinprry/mhrs_project.git ~/mhrs_project
-                        cd ~/mhrs_project
-                        git pull
-                        docker compose down || true
+                    chmod 600 "$SSH_KEY"
+                    ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no -p 2222 "$SSH_USER"@127.0.0.1 "
+                        mkdir -p ~/mhrs_project &&
+                        if [ ! -d ~/mhrs_project/.git ]; then
+                            git clone https://github.com/lorinprry/mhrs_project.git ~/mhrs_project
+                        fi &&
+                        cd ~/mhrs_project &&
+                        git pull origin main &&
+                        docker compose down || true &&
                         docker compose up -d --build
                     "
                     '''
